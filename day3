@@ -58,7 +58,7 @@ def solution(p):
     answer = correction(p)
     return answer
 
-https://programmers.co.kr/learn/courses/30/lessons/60058
+#---------------------------------------------------------------------수정------------------------------------------------------#
 
 def correction(w, correct = ""):
     u = ""
