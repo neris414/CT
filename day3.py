@@ -1,90 +1,68 @@
-def makeVec(input_value):
+def makeVec(inputString):
     tmp = []
-    for i in range(len(input_value)):
-        if input_value[i] == "(":
+    for i in range(len(inputString)):
+        if inputString[i] == "(":
             tmp.append(1)
         else:
             tmp.append(-1)
     return tmp
 
-def decoding(input_vec):
+def decoding(inputVec):
     tmp = ""
-    for i in input_vec:
+    for i in inputVec:
         if i == 1:
             tmp += "("
         else:
             tmp += ")"
     return tmp
 
-def isBalanced(vector):
+def isBalanced(inputString):
     balance_value = 0
-    for i in vector:
-        balance_value += i
+    for i in makeVec(inputString):
+        balance_value += int(i)
     if balance_value == 0:
         return True
     else:
         return False
 
-def isCorrect(vector):
-    if (vector[0] == 1) & (vector[-1] == -1):
-        return True
-    else:
-        return False
+def isCorrect(inputString):
+    balance_value = 0
+    for i in makeVec(inputString):
+        balance_value += int(i)
+        if balance_value == -1:
+            return False
+    return True
 
-def revise(vector):
-    for i in range(len(vector)):
-        vector[i] = -vector[i]
-    return "".join(decoding(vector[1:-1]))
+def splitter(inputString):
+    left = []
+    right = list(inputString)
+    for i in inputString:
+        left.append(i)
+        right.pop(0)
+        if isBalanced("".join(left)):
+            return ("".join(left),"".join(right))
+    return ("".join(left),"".join(right))
 
-def correction(w, correct = ""):
-    u = []
-    v = makeVec(w)
-    result = correct
-    for i in range(len(w)):
-        if w[i] == "(":
-            u.append(1)
+def reverse(inputString):
+    tmp = ""
+    for i in inputString:
+        if (i == "("):
+            tmp += ")"
         else:
-            u.append(-1)
-        del v[0]
-        if (isBalanced(u) == True):
-            if (isCorrect(u) == True):
-                result += decoding(u)
-            else:
-                result += "(" + revise(u) + ")"
-            return correction(decoding(v),result)
-    return result
+            tmp += "("
+    return tmp
 
-def solution(p):
-    answer = correction(p)
-    return answer
-
-#---------------------------------------------------------------------수정------------------------------------------------------#
-
-def correction(w, correct = ""):
-    u = ""
-    reverse_u = ""
-    v = w
-    balanced_value = 0
-    result = correct
-
-    for i in range(len(w)):
-        if w[i] == "(":
-            balanced_value += 1
-            u += "("
-            reverse_u += ")"
+def revise(inputString):
+    result = ""
+    left, right = splitter(inputString)
+    while(True):
+        if (isCorrect(left)):
+            result += left
+            left, right = splitter(right)
         else:
-            balanced_value -= 1
-            u += ")"
-            reverse_u += "("
-        v = v[1:]
-        if (balanced_value == 0):
-            if (u[0] == "(") & (u[-1] == ")"):
-                result += u
-            else:
-                result += "(" + reverse_u[1:-1] + ")"
-            return correction(v,result)
-    return result
-
+            result = result + "(" + reverse(left[1:-1]) + ")"
+            left, right = splitter(right)
+        if (right == ""):
+            return result + left
 def solution(p):
-    answer = correction(p)
-    return answer
+    return revise(p)
